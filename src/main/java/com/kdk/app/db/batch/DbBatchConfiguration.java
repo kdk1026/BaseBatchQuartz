@@ -175,7 +175,7 @@ public class DbBatchConfiguration {
 		public void afterJob(JobExecution jobExecution) {
 			if ( jobExecution.getStatus() == BatchStatus.COMPLETED ) {
 				log.info("DbBatch Job completed successfully!");
-			} else if ( jobExecution.getStatus() == BatchStatus.FAILED || jobExecution.getStatus() == BatchStatus.STOPPING ) {
+			} else if ( jobExecution.getStatus() == BatchStatus.FAILED || jobExecution.getStatus() == BatchStatus.STOPPED ) {
 				log.error("Job failed or stopped with status: {}", jobExecution.getAllFailureExceptions());
 			}
 		}
