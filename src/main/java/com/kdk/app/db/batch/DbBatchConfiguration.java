@@ -2,7 +2,6 @@ package com.kdk.app.db.batch;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -20,8 +19,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -56,9 +53,6 @@ public class DbBatchConfiguration {
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
-
-    @Autowired
-    private JobOperator jobOperator;
 
     private static final int PAGE_SIZE_AND_CHUNK_SIZE = 1000;
     private static final String JOB_NAME = "importCityJob";
@@ -138,9 +132,6 @@ public class DbBatchConfiguration {
 							log.error("", e);
 							throw e;
 						}
-
-						// 실행 중인 잡 정리
-                        stopRunningJobs(JOB_NAME);
 					}
 
 					@Override
@@ -189,21 +180,6 @@ public class DbBatchConfiguration {
 			}
 		}
 
-    }
-
-    public void stopRunningJobs(String jobName) {
-        try {
-            Set<Long> runningExecutions = jobOperator.getRunningExecutions(jobName);
-            for (Long executionId : runningExecutions) {
-                try {
-                    jobOperator.stop(executionId);
-                } catch (Exception e) {
-                    log.error("Error stopping job execution: " + executionId, e);
-                }
-            }
-        } catch (NoSuchJobException e) {
-            log.error("Error retrieving running job executions for job: " + jobName, e);
-        }
     }
 
 

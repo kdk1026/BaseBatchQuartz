@@ -1,7 +1,5 @@
 package com.kdk.app.file.batch;
 
-import java.util.Set;
-
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -15,8 +13,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -55,17 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 @EnableBatchProcessing
 public class FileBatchConfiguration {
 
-	// TODO org.springframework.batch.core.JobInterruptedException: Job interrupted status detected.
-	/*
-	 * chunk 사이즈만큼 1번은 돌고, 다음에 발생
-	 * 도저히 모르겠음
-	 */
-
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
-
-    @Autowired
-    private JobOperator jobOperator;
 
     private static final String JOB_NAME = "importAccountJob";
     private static final int CHUNK_SIZE = 10;
@@ -79,6 +66,7 @@ public class FileBatchConfiguration {
         DefaultLineMapper<VirtualAccountVo> lineMapper = new DefaultLineMapper<>();
 //        csv 파일 등
 //        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
+//        tokenizer.setDelimiter(",");
 //        tokenizer.setNames("필드1", "필드2");
 
         LineTokenizer tokenizer = new LineTokenizer() {
@@ -120,7 +108,7 @@ public class FileBatchConfiguration {
 			@Override
 			public void write(Chunk<? extends VirtualAccountVo> chunk) throws Exception {
 				log.info("Writing " + chunk.size() + " items.");
-				try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)  ) {
+				try ( SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false) ) {
 					for ( VirtualAccountVo item : chunk ) {
 						sqlSession.insert("com.kdk.app.file.mapper.VirtualAccountMaper.insertVirtualAccount", item);
 					}
@@ -153,14 +141,12 @@ public class FileBatchConfiguration {
 							log.error("", e);
 							throw e;
 						}
-
-						// 실행 중인 잡 정리
-                        stopRunningJobs(JOB_NAME);
 					}
 
 					@Override
 					public ExitStatus afterStep(StepExecution stepExecution) {
 						log.info("Step 완료: {}, 상태: {}", stepExecution.getStepName(), stepExecution.getStatus());
+						log.info("Step Execution Context: {}", stepExecution.getExecutionContext());
 						return stepExecution.getExitStatus();
 					}
 
@@ -193,26 +179,11 @@ public class FileBatchConfiguration {
 		public void afterJob(JobExecution jobExecution) {
 			if ( jobExecution.getStatus() == BatchStatus.COMPLETED ) {
 				log.info("fileBatch Job completed successfully!");
-			} else if ( jobExecution.getStatus() == BatchStatus.FAILED || jobExecution.getStatus() == BatchStatus.STOPPING ) {
+			} else if ( jobExecution.getStatus() == BatchStatus.FAILED || jobExecution.getStatus() == BatchStatus.STOPPED ) {
 				log.error("Job failed or stopped with status: {}", jobExecution.getAllFailureExceptions());
 			}
 		}
 
-    }
-
-    public void stopRunningJobs(String jobName) {
-        try {
-            Set<Long> runningExecutions = jobOperator.getRunningExecutions(jobName);
-            for (Long executionId : runningExecutions) {
-                try {
-                    jobOperator.stop(executionId);
-                } catch (Exception e) {
-                    log.error("Error stopping job execution: " + executionId, e);
-                }
-            }
-        } catch (NoSuchJobException e) {
-            log.error("Error retrieving running job executions for job: " + jobName, e);
-        }
     }
 
 }
