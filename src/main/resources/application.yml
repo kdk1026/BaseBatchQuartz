@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: BaseBatchQuartz
+  profiles:
+    active:
+    - local
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: QuartzScheduler
+            instanceId: AUTO
+          threadPool:
+            threadCount: 5
+          jobStore:
+            misfireThreshold: 60000
+            class: org.quartz.simpl.RAMJobStore

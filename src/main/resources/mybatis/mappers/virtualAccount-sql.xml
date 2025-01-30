@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kdk.app.file.mapper.VirtualAccountMaper">
+
+	<delete id="deleteVirtualAccount">
+		/* VirtualAccountMaper.deleteVirtualAccount */
+		DELETE FROM virtual_account
+	</delete>
+
+	<insert id="insertVirtualAccount" parameterType="com.kdk.app.file.vo.VirtualAccountVo">
+		/* VirtualAccountMaper.insertVirtualAccount */
+		INSERT INTO virtual_account (
+			ID
+			, acount
+			, CREATE_TIME
+		)
+		SELECT IFNULL(MAX_ID, 0) + 1
+				, #{acount}
+				, now()
+		FROM (SELECT MAX(ID) AS MAX_ID FROM virtual_account) AS maxid
+	</insert>
+
+</mapper>

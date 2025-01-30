@@ -1,0 +1,16 @@
+* 파일 테스트 시
+	//@Configuration
+	//@EnableBatchProcessing
+	public class DbBatchConfiguration {
+
+	//@Configuration
+	public class DbQuartzConfiguration {
+
+
+* DB 테스트 시
+	//@Configuration
+	//@EnableBatchProcessing
+	public class FileBatchConfiguration {
+
+	//@Configuration
+	public class FileQuartzConfiguration {

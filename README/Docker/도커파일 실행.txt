@@ -1,0 +1,8 @@
+$ docker build -f MySqlDockerfile -t my-mysql .
+$ docker run -d -p 3306:3306 --name my-mysql-container my-mysql
+
+$ docker ps
+$ docker exec -it <container_id> mysql -u root -p
+
+접속이 안되는 경우
+$ docker restart <container_id>

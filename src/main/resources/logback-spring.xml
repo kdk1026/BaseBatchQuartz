@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- configuration file for LogBack (slf4J implementation)
+See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<property name="LOG_PATH" value="./logs"/>
+	<property name="LOG_FILE_NAME" value="baseFront"/>
+	<property name="ERR_LOG_FILE_NAME" value="err_log"/>
+	<property name="LOG_PATTERN" value="[%d{HH:mm:ss:SS}][%thread][%-5level][%logger{0}:%method:%line] - %msg%n"/>
+
+    <springProfile name="local">
+        <property name="TRANSACTION_LEVEL" value="debug"/>
+    </springProfile>
+    <springProfile name="!local">
+        <property name="TRANSACTION_LEVEL" value="info"/>
+    </springProfile>
+
+	<springProfile name="local">
+		<property name="SQL_RESULT_LEVEL" value="info"/>
+	</springProfile>
+	<springProfile name="!local">
+		<property name="SQL_RESULT_LEVEL" value="error"/>
+	</springProfile>
+
+	<springProfile name="local">
+		<property name="PACKAGE_LEVEL" value="debug"/>
+	</springProfile>
+	<springProfile name="!local">
+		<property name="PACKAGE_LEVEL" value="info"/>
+	</springProfile>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="packageFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 에러의 경우 파일에 로그 처리 -->
+	<appender name="Error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>error</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>${LOG_PATH}/error/${ERR_LOG_FILE_NAME}.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/error/${ERR_LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxHistory>60</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<!-- Spring Framework -->
+	<logger name="org.springframework" level="error" additivity="false">
+		<appender-ref ref="console"/>
+	</logger>
+	<logger name="org.apache.ibatis.session" level="error" />
+	<logger name="org.mybatis.spring.SqlSessionUtils" level="error" />
+	<logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="${TRANSACTION_LEVEL}" additivity="false">
+		<appender-ref ref="console"/>
+		<appender-ref ref="packageFile"/>
+	</logger>
+
+	<!-- Personal -->
+	<logger name="com.zaxxer.hikari" level="error" />
+
+	<!-- SQL -->
+	<logger name="java.sql" level="error" />
+	<logger name="jdbc.sqlonly" level="off" />
+	<logger name="jdbc.sqltiming" level="info" additivity="false">
+		<appender-ref ref="console"/>
+		<appender-ref ref="packageFile"/>
+		<appender-ref ref="Error"/>
+	</logger>
+	<logger name="jdbc.audit" level="off" />
+	<logger name="jdbc.resultset" level="off" />
+	<logger name="jdbc.resultsettable" level="${SQL_RESULT_LEVEL}" additivity="false">
+		<appender-ref ref="console"/>
+	</logger>
+	<logger name="jdbc.connection" level="error" additivity="false">
+		<appender-ref ref="console"/>
+	</logger>
+
+	<!-- Package -->
+	<logger name="com.kdk" level="${PACKAGE_LEVEL}" additivity="false">
+		<appender-ref ref="console"/>
+		<appender-ref ref="packageFile"/>
+		<appender-ref ref="Error"/>
+	</logger>
+
+	<!-- Batch -->
+	<logger name="org.springframework.batch.core" level="DEBUG" additivity="false">
+		<appender-ref ref="console"/>
+		<appender-ref ref="packageFile"/>
+		<appender-ref ref="Error"/>
+	</logger>
+
+	<root level="${PACKAGE_LEVEL}">
+		<appender-ref ref="console"/>
+	</root>
+
+</configuration>

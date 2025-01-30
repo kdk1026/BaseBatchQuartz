@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<!-- Default is SIMPLE -->
+		<setting name="defaultExecutorType" value="REUSE" />
+
+	  	<!-- Default is null, Unit is Second -->
+		<setting name="defaultStatementTimeout" value="30"/>
+
+		<!-- Default is true, EhCache Enable When is false -->
+		<setting name="cacheEnabled" value="false" />
+
+		<!-- Default is false -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.ClobTypeHandler" jdbcType="CLOB" javaType="java.lang.String" />
+    </typeHandlers>
+
+</configuration>

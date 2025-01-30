@@ -1,0 +1,6 @@
+https://mvnrepository.com/artifact/org.springframework.batch/spring-batch-core
+
+해당 버전의 jar 파일 다운로드
+
+JD-GUI 를 통해
+해당 DB의 SQL 파일 복사해서 스크립트 수행
