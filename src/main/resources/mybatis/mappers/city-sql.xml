@@ -4,24 +4,15 @@
 <mapper namespace="com.kdk.app.db.mapper.CityMapper">
 
 <!--
-	<select id="selectCityAllOracle" parameterType="map" resultType="com.kdk.app.db.vo.CityVo">
+	<select id="selectCityAll" parameterType="map" resultType="com.kdk.app.db.vo.CityVo">
 		/* CityMapper.selectCityAllOracle */
         WITH CityData AS (
             SELECT ID, Name, CountryCode, District, Population,
-                   ROW_NUMBER() OVER (ORDER BY ID) AS row_num
+                   ROW_NUMBER() OVER (ORDER BY ID) AS rnum
             FROM City
         )
-        SELECT * FROM CityData
-        WHERE row_num BETWEEN #{offset} AND #{offset} + #{limit} - 1
-	</select>
-
-	<select id="selectCityAllMsSql" parameterType="map" resultType="com.kdk.app.db.vo.CityVo">
-		/* CityMapper.selectCityAllMsSql */
-        SELECT ID, Name, CountryCode, District, Population
-        FROM City
-        ORDER BY ID
-        OFFSET #{offset} ROWS
-        FETCH NEXT #{limit} ROWS ONLY
+        SELECT * FROM city
+        WHERE rnum BETWEEN #{offset} AND #{offset} + #{limit} - 1
 	</select>
 -->
 
