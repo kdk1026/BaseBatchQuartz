@@ -1,5 +1,7 @@
 # Dockerfile
 FROM mysql:latest
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
 
 ENV MYSQL_ROOT_PASSWORD=qwer1234
 ENV MYSQL_DATABASE=world
