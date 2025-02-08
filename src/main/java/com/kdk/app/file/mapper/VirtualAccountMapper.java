@@ -16,7 +16,7 @@ import com.kdk.app.file.vo.VirtualAccountVo;
  * @author kdk
  */
 @Mapper
-public interface VirtualAccountMaper {
+public interface VirtualAccountMapper {
 
 	public int deleteVirtualAccount();
 
