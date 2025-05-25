@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.kdk.app.common.component.SpringBootProperty;
 import com.kdk.app.file.batch.reader.VirtualAccountVoFileReader;
 import com.kdk.app.file.batch.writer.VirtualAccountVoFileWriter;
 import com.kdk.app.file.vo.VirtualAccountVo;
@@ -44,9 +45,11 @@ import lombok.extern.slf4j.Slf4j;
 public class FileBatchConfiguration {
 
     private final SqlSessionFactory sqlSessionFactory;
+    private final SpringBootProperty springBootProperty;
 
-    public FileBatchConfiguration(SqlSessionFactory sqlSessionFactory) {
+    public FileBatchConfiguration(SqlSessionFactory sqlSessionFactory, SpringBootProperty springBootProperty) {
 		this.sqlSessionFactory = sqlSessionFactory;
+		this.springBootProperty = springBootProperty;
 	}
 
 	private static final String JOB_NAME = "importAccountJob";
@@ -54,7 +57,7 @@ public class FileBatchConfiguration {
 
     @Bean
     FlatFileItemReader<VirtualAccountVo> fileReader() {
-        return new VirtualAccountVoFileReader("C:/test/acount.txt");
+        return new VirtualAccountVoFileReader(springBootProperty.getProperty("file.virtual-account"));
     }
 
     @Bean
