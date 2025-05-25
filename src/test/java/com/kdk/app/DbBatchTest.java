@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author kdk
  */
 @SpringBootTest
-public class DbBatchTest {
+class DbBatchTest {
 
 	@Autowired
 	private JobLauncher jobLauncher;
@@ -32,7 +32,7 @@ public class DbBatchTest {
     private org.springframework.batch.core.Job importCityJob;
 
     @Test
-    public void test() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+    void test() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("timestamp", System.currentTimeMillis())
                 .toJobParameters();

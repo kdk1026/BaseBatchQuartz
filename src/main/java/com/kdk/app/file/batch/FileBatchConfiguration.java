@@ -17,7 +17,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -44,10 +43,13 @@ import lombok.extern.slf4j.Slf4j;
 @EnableBatchProcessing
 public class FileBatchConfiguration {
 
-    @Autowired
-    private SqlSessionFactory sqlSessionFactory;
+    private final SqlSessionFactory sqlSessionFactory;
 
-    private static final String JOB_NAME = "importAccountJob";
+    public FileBatchConfiguration(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
+
+	private static final String JOB_NAME = "importAccountJob";
     private static final int CHUNK_SIZE = 10;
 
     @Bean

@@ -47,10 +47,13 @@ import lombok.extern.slf4j.Slf4j;
 //@EnableBatchProcessing
 public class DbBatchConfiguration {
 
-    @Autowired
-    private SqlSessionFactory sqlSessionFactory;
+    private final SqlSessionFactory sqlSessionFactory;
 
-    private static final int PAGE_SIZE_AND_CHUNK_SIZE = 1000;
+    public DbBatchConfiguration(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
+
+	private static final int PAGE_SIZE_AND_CHUNK_SIZE = 1000;
     private static final String JOB_NAME = "importCityJob";
 
     @Bean

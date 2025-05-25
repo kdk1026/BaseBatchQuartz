@@ -6,7 +6,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,11 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileQuartzJobLauncher implements Job {
 
-	@Autowired
-	private JobLauncher jobLauncher;
+	private final JobLauncher jobLauncher;
+    private final org.springframework.batch.core.Job importAccountJob;
 
-    @Autowired
-    private org.springframework.batch.core.Job importAccountJob;
+	public FileQuartzJobLauncher(JobLauncher jobLauncher, org.springframework.batch.core.Job importAccountJob) {
+		this.jobLauncher = jobLauncher;
+		this.importAccountJob = importAccountJob;
+	}
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {

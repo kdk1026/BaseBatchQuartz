@@ -8,7 +8,6 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -32,10 +31,13 @@ public class MyBatisConfig {
 	private static final String MYBATIS_CONFIG_LOCATION = "mybatis/configuration.xml";
 	private static final String MYBATIS_MAPPER_LOCATION = "classpath:mybatis/mappers/**/*.xml";
 
-	@Autowired
-	private DataSource dataSource;
+	private final DataSource dataSource;
 
-    @Bean
+    public MyBatisConfig(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	@Bean
     SqlSessionFactory sqlSessionFactory() throws Exception {
     	SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
