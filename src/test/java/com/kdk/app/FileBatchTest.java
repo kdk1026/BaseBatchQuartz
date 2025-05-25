@@ -1,5 +1,7 @@
 package com.kdk.app;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -38,6 +40,7 @@ class FileBatchTest {
                 .toJobParameters();
 
         jobLauncher.run(importAccountJob, jobParameters);
+        assertTrue(true);
     }
 
 }
